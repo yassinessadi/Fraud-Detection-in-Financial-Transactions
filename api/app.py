@@ -48,19 +48,16 @@ def get_all_customers():
     
 
 
-# "get all customers. (customers endpoint)"
+# "get all external_data. (external_data endpoint)"
 
 @app.route("/api/external_data/",methods=['GET'])
 def get_all_external_data():
-    df = pd.read_json("../data/external_data.json",orient='records')
     try:
-        # Convert DataFrame to dictionary and get the item by ID
-        item = df.to_json(orient='records')
-        if item:
-            return json.loads(item)
-            # return jsonify(item)
-        else:
-            return jsonify({'error': 'external data not found'}), 404
+        with open('../data/external_data.json','r') as file:
+            if file:
+                return json.load(file)
+            else:
+                return jsonify({'error': 'external data not found'}), 404
 
     except FileNotFoundError:
         return jsonify({'error': 'File not found'}), 500
