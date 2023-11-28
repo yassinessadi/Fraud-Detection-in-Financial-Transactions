@@ -37,7 +37,6 @@ def get_all_customers():
         item = df.to_json(orient='records')
         if item:
             return json.loads(item)
-            # return jsonify(item)
         else:
             return jsonify({'error': 'customers not found'}), 404
 
