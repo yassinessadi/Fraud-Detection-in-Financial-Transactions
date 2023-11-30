@@ -8,40 +8,46 @@ if transactions.status_code == 200:
     data = transactions.json()[0]
 
     # Establish a connection
-    connection = hive.connect(host='localhost', port=10000, database='testdb')
+    connection = hive.connect(host='localhost', database='testdb')
     cursor = connection.cursor()
-
+    
     # Create the table
     table_creation_query = """
-    CREATE TABLE IF NOT EXISTS testdb.users (
-        account_history ARRAY<STRING>,
-        behavioral_patterns STRUCT<avg_transaction_value: DOUBLE>,
+    CREATE TABLE IF NOT EXISTS testdb.customers (
+        account_history STRING,
+        avg_transaction_value DOUBLE,
         customer_id STRING,
-        demographics STRUCT<age: INT, location: STRING>
+        age INT,
+        location STRING
     )
     """
     cursor.execute(table_creation_query)
 
+    account_history_string = ",".join(data["account_history"])
+
     # Insert data into the table
-    insert_query = """
-    INSERT INTO testdb.users
-    VALUES (?, ?, ?, ?)
-    """
-
-    # cursor.execute(insert_query, (
-    #     data['account_history'],
-    #     {'avg_transaction_value': data['behavioral_patterns']['avg_transaction_value']},
-    #     data['customer_id'],
-    #     {'age': data['demographics']['age'], 'location': data['demographics']['location']}
-    # ))
-
+    insert_query = '''
+    INSERT INTO testdb.customers
+    VALUES ('{a}',
+    '{b}',
+    '{c}',
+    {d},
+    '{e}')
+    '''.format(
+        a = account_history_string,
+        b = data['behavioral_patterns']['avg_transaction_value'],
+        c = data['customer_id'],
+        d = data['demographics']['age'],
+        e = data['demographics']['location']
+    )
+    print(insert_query)
+    cursor.execute(insert_query)
     # Commit the transaction
     connection.commit()
 
     # Fetch and print the inserted data
-    cursor.execute('SELECT * FROM testdb.employee')
-    print(cursor.fetchone())
-    # print(cursor.fetchall())
+    cursor.execute('SELECT * FROM testdb.customers')
+    print(cursor.fetchall())
 
     # Close the cursor and connection
     cursor.close()
