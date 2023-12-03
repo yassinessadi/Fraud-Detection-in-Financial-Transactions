@@ -16,6 +16,25 @@ def customersTable(cursor):
         """
     cursor.execute(table_creation_query)
 
+###################################################
+#    create tables and insert into transactions   #
+##################################################
+def transactionsTable(cursor):
+    table_creation_query = """
+        CREATE TABLE IF NOT EXISTS testdb.transactions (
+            amount DOUBLE,
+            currency STRING,
+            customer_id STRING,
+            date_time BIGINT,
+            location STRING,
+            merchant_details STRING,
+            transaction_id STRING,
+            transaction_type STRING
+        )
+        """
+    cursor.execute(table_creation_query)
+
+
 ###################
 # connect to hive #
 ##################
@@ -38,11 +57,11 @@ def closeConnection(cursor,connection):
 def savesChanges(connection):
     connection.commit()
 
-def get_all_customers(cursor):
+def get_all_data(cursor):
     """
     get all the customers
     """
-    cursor.execute('SELECT * FROM testdb.customers')
+    cursor.execute(f'SELECT * FROM testdb.transactions')
     return cursor.fetchall()
 
 def inseting_query(cursor,query):
@@ -96,9 +115,91 @@ def insert_into_customers(url_base):
     else:
         print("Failed to fetch data from the API.")
 
+def insert_into_external_data(url_base):
+    customers = req.get(url_base)
+    if customers.status_code == 200:
+        result = customers.json()
+        counter = 0
+        while True:
+            data = customers.json()[counter]
+            data['']
+            counter += 1
+            if counter == len(result) :
+                break
+
+
+# DROP TABLE IF EXISTS testdb.users PURGE;
+
+def insert_into_transactions(url_base):
+    customers = req.get(url_base)
+    if customers.status_code == 200:
+        result = customers.json()
+        counter = 0
+        while True:
+            data = customers.json()[counter]
+            insert_query = '''
+            INSERT INTO testdb.transactions
+            VALUES ({a},
+            '{b}',
+            '{c}',
+            {d},
+            '{e}',
+            '{f}',
+            '{g}',
+            '{g}'
+            )
+            '''.format(
+                a = data['amount'],
+                b = data['currency'],
+                c = data['customer_id'],
+                d = data['date_time'],
+                e = data['location'],
+                f = data['merchant_details'],
+                g = data['transaction_id'],
+                h = data['transaction_type']
+            )
+            connection,cursor = connectHive()
+
+            # create customer tables
+            transactionsTable(cursor)
+
+
+            # insert into customers
+            inseting_query(cursor=cursor,query=insert_query)
+
+
+            # save changes
+            savesChanges(connection)
+            
+            # get all data
+            print(get_all_data(cursor=cursor))
+
+            # close connection
+            closeConnection(cursor=cursor,connection=connection)
+
+            counter += 1
+            if counter == len(result) :
+                break
 
 
 #########################
 # insert into customers #
 #########################
-insert_into_customers("http://127.0.0.1:5000/api/customers/")
+
+# insert_into_customers("http://127.0.0.1:5000/api/customers/")
+
+
+#############################
+# insert into external data #
+#############################
+
+# insert_into_external_data("http://127.0.0.1:5000/api/external_data/")
+
+
+
+#############################
+# insert into transactions  #
+#############################
+
+
+insert_into_transactions("http://127.0.0.1:5000/api/transactions/")
