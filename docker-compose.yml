@@ -1,5 +1,14 @@
 version: '3'
 services:
+  fraudairflow:
+    image: fraudairflow:latest
+    volumes:
+      - ./airflow:/opt/airflow
+
+    ports:
+      - "8080:8080"
+    command: airflow standalone  
+
 
   namenode:
     image: bde2020/hadoop-namenode:2.0.0-hadoop2.7.4-java8
