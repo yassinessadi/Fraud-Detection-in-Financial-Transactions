@@ -1,13 +1,13 @@
 version: '3'
 services:
-  fraudairflow:
-    image: fraudairflow:latest
-    volumes:
-      - ./airflow:/opt/airflow
+  # fraudairflow:
+  #   image: fraudairflow:latest
+  #   volumes:
+  #     - ./airflow:/opt/airflow
 
-    ports:
-      - "8080:8080"
-    command: airflow standalone  
+  #   ports:
+  #     - "8080:8080"
+  #   command: airflow standalone  
 
 
   namenode:

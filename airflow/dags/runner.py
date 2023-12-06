@@ -4,24 +4,24 @@ from datetime import datetime, timedelta
 
 default_args = {
     'owner': 'jane',
-    'start_date': datetime(2023, 10, 24),
+    'start_date': datetime(2023, 12, 4),
     'retries': 1,
-    'retry_delay': timedelta(minutes=3),
+    'retry_delay': timedelta(seconds=100),
 }
 
 # Create an instance of the DAG
 dag = DAG(
-    'task_to_run',
+    'task_to_run_transations',
     default_args=default_args,
-    description='Data pipeline for collecting and analyzing data from Mastodon',
-    schedule_interval=timedelta(minutes=3),
+    description='check the transactions data',
+    schedule_interval=timedelta(seconds=100),
     catchup=False,
 )
 
 # Run Task to get data
 run_the_api = BashOperator(
     task_id='run_the_api',
-    bash_command="python3 ~/mastodon/extraction_data.py",
+    bash_command="flask --app /mnt/c/users/youcode/desktop/Fraud-Detection-in-Financial-Transactions/api/app run",
     dag=dag,
 )
 
@@ -29,7 +29,7 @@ run_the_api = BashOperator(
 
 run_insertion = BashOperator(
     task_id='run_insertion',
-    bash_command="python3 ../../",
+    bash_command="python3 /mnt/c/users/youcode/desktop/Fraud-Detection-in-Financial-Transactions/hive/employee/connection.py",
     dag=dag,
 )
 # Set task dependencies

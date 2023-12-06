@@ -278,14 +278,14 @@ def insert_into_transactions(url_base):
 # insert into black list #
 #############################
 
-# insert_blacklist_info("http://127.0.0.1:5000/api/external_data/")
+insert_blacklist_info("http://127.0.0.1:5000/api/external_data/")
 
 
 #############################
 # insert into external data #
 #############################
 
-insert_fraud_details("http://127.0.0.1:5000/api/external_data/")
+# insert_fraud_details("http://127.0.0.1:5000/api/external_data/")
 
 #############################
 # insert into transactions  #
